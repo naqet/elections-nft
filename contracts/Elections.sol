@@ -22,20 +22,19 @@ contract ElectionsLogic is Ownable {
 
     constructor(address _nftAddress) Ownable(msg.sender) {
         nftAddress = _nftAddress;
-        isVotingEnabled = true;
     }
 
-    modifier onlyInVotingPhase() {
+    modifier onlyWhenVotingIsEnabled() {
         require(
-            !isVotingEnabled,
+            isVotingEnabled,
             "This function can be called only when voting is enabled"
         );
         _;
     }
 
-    modifier onlyInConfigPhase() {
+    modifier onlyWhenVotingIsDisabled() {
         require(
-            isVotingEnabled,
+            !isVotingEnabled,
             "This function can be called only when voting in disabled"
         );
         _;
@@ -43,7 +42,7 @@ contract ElectionsLogic is Ownable {
 
     function addParty(
         string memory _partyName
-    ) public onlyOwner onlyInConfigPhase {
+    ) public onlyOwner onlyWhenVotingIsDisabled {
         require(
             !doesPartyExist(_partyName),
             "Party with this name already exists"
@@ -54,7 +53,7 @@ contract ElectionsLogic is Ownable {
     function addCandidate(
         string memory _partyName,
         string memory _name
-    ) public onlyOwner onlyInConfigPhase {
+    ) public onlyOwner onlyWhenVotingIsDisabled {
         require(doesPartyExist(_partyName), "Party does not exist");
         require(
             !doesCandidateExist(_name, _partyName),
@@ -106,7 +105,7 @@ contract ElectionsLogic is Ownable {
     function vote(
         string memory _partyName,
         string memory _candidateName
-    ) public onlyInVotingPhase {
+    ) public onlyWhenVotingIsEnabled {
         require(doesPartyExist(_partyName), "Party does not exist");
         require(
             doesCandidateExist(_candidateName, _partyName),

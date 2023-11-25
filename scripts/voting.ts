@@ -131,4 +131,4 @@ function convertToCSV(value: Record<any, any>[]) {
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
-}
+});
